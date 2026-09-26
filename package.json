@@ -1,10 +1,22 @@
 {
-  "name": "@local/ocean-waves-theme",
-  "version": "1.0.0",
-  "private": true,
+  "name": "@johnsonspirit/ocean-wave-theme",
+  "version": "1.1.0",
   "type": "module",
   "icon": "./icon.svg",
-  "description": "Animated ocean waves across the entire app background, with translucent surfaces.",
+  "description": "Animated ocean waves with a whale swimming behind the page, plus translucent surfaces.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnsonspirit/ocean-wave-theme.git"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "theme",
+    "ocean",
+    "waves",
+    "backdrop"
+  ],
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",
@@ -15,7 +27,11 @@
     "index.js",
     "client.js",
     "icon.svg",
-    "locale/*.json"
+    "locale/*.json",
+    "README.md",
+    "LICENSE",
+    "screenshots.json",
+    "assets/*.png"
   ],
   "dsh": {
     "bundle": { "patch": "./cordis.patch.yml" },
