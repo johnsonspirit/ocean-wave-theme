@@ -1,6 +1,6 @@
 {
   "name": "@johnsonspirit/ocean-wave-theme",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "icon": "./icon.svg",
   "description": "Animated ocean waves with a whale swimming behind the page, plus translucent surfaces.",
@@ -21,11 +21,14 @@
     ".": "./index.js",
     "./client": "./client.js",
     "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./icon": "./icon.svg",
     "./locale/*.json": "./locale/*.json"
   },
   "files": [
     "index.js",
     "client.js",
+    "cordis.patch.yml",
     "icon.svg",
     "locale/*.json",
     "README.md",
@@ -38,7 +41,10 @@
     "client": {
       "platform": "web",
       "immediately": true,
-      "inject": ["@deepseek-ai/dsh-client-ui-layout"]
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-theme"
+      ]
     }
   }
 }

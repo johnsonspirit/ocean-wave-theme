@@ -5,6 +5,10 @@ window.__ModuleLoader__.load({
 
     const BACKDROP_ATTR = 'data-ocean-backdrop';
     const STYLE_ID = 'ocean-waves-theme-style';
+    const MODULE_ID = '@johnsonspirit/ocean-wave-theme';
+    const THEME_SOURCE = 'ocean-wave-theme';
+    const THEME_POLL_INTERVAL = 250;
+    const THEME_POLL_TIMEOUT = 6000;
 
     const LIGHT_TOKENS = {
       '--dsw-alias-bg-base': 'rgba(233, 244, 250, 0.52)',
@@ -381,17 +385,49 @@ window.__ModuleLoader__.load({
       };
     }
 
+    function themeService(ctx) {
+      if (ctx.theme) return ctx.theme;
+      if (typeof ctx.get !== 'function') return null;
+      try {
+        return ctx.get('theme') || null;
+      } catch {
+        return null;
+      }
+    }
+
     return {
-      inject: ['theme'],
+      name: MODULE_ID,
       apply(ctx) {
+        ctx.effect(() => startBackdrop(), 'ocean-wave: backdrop');
+        /* Declaring `theme` as an injected service parks the whole plugin while the
+           service is missing, taking the backdrop down with it; it only appears a few
+           hundred ms after load, so poll for it instead of depending on it. */
         ctx.effect(() => {
-          const disposeTheme = ctx.theme.overrideTokens('ocean-wave-theme', tokenOverrides());
-          const disposeBackdrop = startBackdrop();
-          return () => {
-            disposeBackdrop();
-            disposeTheme();
+          let dispose = null;
+          let timer = null;
+          let waited = 0;
+          const tick = () => {
+            const theme = themeService(ctx);
+            if (theme && typeof theme.overrideTokens === 'function') {
+              try {
+                dispose = theme.overrideTokens(THEME_SOURCE, tokenOverrides());
+              } catch {
+                dispose = null;
+              }
+              return;
+            }
+            waited += THEME_POLL_INTERVAL;
+            if (waited >= THEME_POLL_TIMEOUT) return;
+            timer = setTimeout(tick, THEME_POLL_INTERVAL);
           };
-        }, 'ocean-wave: backdrop + translucent surfaces');
+          tick();
+          return () => {
+            if (timer !== null) clearTimeout(timer);
+            if (dispose) {
+              try { dispose(); } catch { /* the service was replaced or destroyed */ }
+            }
+          };
+        }, 'ocean-wave: translucent surfaces');
       },
     };
   },
